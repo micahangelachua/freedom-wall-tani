@@ -1,6 +1,8 @@
 const { ObjectId } = require('mongodb');
 const express = require('express');
 const { connectToDb, getDb } = require('./db.js');
+const { request, response } = require('express');
+const db = require('./db.js');
 
 //initialize app & middleware
 const app = express();
@@ -53,3 +55,17 @@ app.delete('/posts/:id',(request, response) => {
       response.status(500).json({error: "Not valid post id"})
    }
 });
+
+//update a post
+app.patch('/posts/:id', (request, response) =>{
+   const updates = request.body
+   if(ObjectId.isValid(request.params.id)){
+      db.collection('posts')
+      .updateOne({id: ObjectId(request.params.id)}, {$set: updates})
+      .then(result => {
+         response.status(200).json(result)
+      })
+   } else {
+      response.status(500).json({error: "Not a valid post id"})
+   }
+})
