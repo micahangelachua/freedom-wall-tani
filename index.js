@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const express = require('express');
 const { connectToDb, getDb } = require('./db.js');
 
@@ -38,3 +39,17 @@ app.post('/posts', (request, response) => {
       response.status(500).json({error: "Could not write on wall"})
    })
 })
+
+//delete a post
+app.delete('/posts/:id',(request, response) => {
+   if(ObjectId.isValid(request.params.id)){
+      db.collection('posts').deleteOne({_id: ObjectId(request.params.id)})
+      .then(result => {
+         response.status(200).json(result)
+      }).catch(err => {
+         response.status(500).json({error: "Could not delete post"})
+      })
+   } else {
+      response.status(500).json({error: "Not valid post id"})
+   }
+});
