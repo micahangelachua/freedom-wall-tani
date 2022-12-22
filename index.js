@@ -25,3 +25,16 @@ app.get('/posts/', (request, response) => {
       })
       .catch(() => response.status(500).json({error: 'Could not fetch posts'}));
 })
+
+//create a post
+app.post('/posts', (request, response) => {
+   const post = request.body
+   db.collection('posts')
+   .insertOne(post)
+   .then(result => {
+      response.status(201).json(result)
+   })
+   .catch( err => {
+      response.status(500).json({error: "Could not write on wall"})
+   })
+})
